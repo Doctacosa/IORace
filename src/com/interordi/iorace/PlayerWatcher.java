@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 //import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -106,15 +107,16 @@ public class PlayerWatcher implements Runnable {
 		Integer oldPos = posPlayers.get(p.getUniqueId());
 		
 		if (oldPos == null || currentPos > oldPos) {
+			//Null bad. Numbers good!
+			if (oldPos == null)	oldPos = 0;
+			
 			//Record the new position
-			oldPos = 0;
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
 			//Check if a new target has been reached
-			
 			if (currentPos / 5000 > oldPos / 5000) {
 				int announce = (currentPos / 5000) * 5000;
-				plugin.getLogger().info("|IOBC|Player " + p.getName() + " has passed the " + announce + " metres mark!");
+				plugin.getLogger().info("|IOBC|Player " + p.getName() + " has passed the " + String.format(Locale.US, "%,d", announce) + " metres mark!");
 			}
 			
 			return true;

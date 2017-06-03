@@ -1,5 +1,7 @@
 package com.interordi.iorace;
 
+import java.util.Locale;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -35,7 +37,7 @@ public class DeathListener implements Listener {
 			if (p.getGameMode() == GameMode.SURVIVAL) {
 				//If we want to announce deaths, broadcast it
 				if (this.announceDeaths)
-					plugin.getLogger().info("|IOBC|Player " + p.getName() + " has fallen after " + plugin.getPosition(p) + " metres!");
+					plugin.getLogger().info("|IOBC|Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", plugin.getPosition(p)) + " metres!");
 			}
 			
 			@SuppressWarnings("unused")
@@ -47,7 +49,6 @@ public class DeathListener implements Listener {
 	
 	
 	//Respawn to spawn
-	//TODO: Make sure this doesn't work on reloggings... It shouldn't, but still...
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player p = event.getPlayer();
