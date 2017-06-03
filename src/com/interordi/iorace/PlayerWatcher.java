@@ -133,8 +133,7 @@ public class PlayerWatcher implements Runnable {
 		if (pos == null)
 			pos = 0;
 		
-		return "" + pos;
-		//return NumberFormat.getIntegerInstance().format(pos);
+		return String.format(Locale.US, "%,d", pos);
 	}
 	
 	
