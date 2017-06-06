@@ -59,7 +59,12 @@ public class DeathListener implements Listener {
 		plugin.getLogger().info("Respawning " + p.getName());
 		World w = Bukkit.getServer().getWorlds().get(0);
 		
-		p.teleport(w.getSpawnLocation());
+		//Run this a few ticks later to let the server catch-up
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			public void run() {
+				p.teleport(w.getSpawnLocation());
+			}
+		}, 10);
 	}
 
 
