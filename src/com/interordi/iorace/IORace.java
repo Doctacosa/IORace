@@ -23,8 +23,10 @@ public class IORace extends JavaPlugin {
 		
 		//Configuration file use (config.yml): http://wiki.bukkit.org/Configuration_API_Reference
 		boolean announceDeaths = this.getConfig().getBoolean("announce-deaths");
+		int announceInterval = this.getConfig().getInt("announce-interval");
 		thisDeathListener.setAnnounceDeaths(announceDeaths);
 		thisPlayerWatcher.setAnnounceDeaths(announceDeaths);
+		thisPlayerWatcher.setAnnounceInterval(announceInterval);
 		
 		//Check every second for updated positions
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 10*20L, 10*20L);

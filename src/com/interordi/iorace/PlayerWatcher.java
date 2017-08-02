@@ -23,6 +23,7 @@ public class PlayerWatcher implements Runnable {
 	private String filePath = "plugins/IORace/positions.yml";
 	Map< UUID, Integer > posPlayers;
 	boolean announceDeaths = false;
+	int announceInterval = 5000;
 	
 	
 	public PlayerWatcher(IORace plugin) {
@@ -99,6 +100,11 @@ public class PlayerWatcher implements Runnable {
 	}
 	
 	
+	public void setAnnounceInterval(int value) {
+		this.announceInterval = value;
+	}
+	
+	
 	//Check and update position if needed
 	public boolean checkStatus(Player p) {
 		Location newLocation = p.getLocation();
@@ -114,8 +120,8 @@ public class PlayerWatcher implements Runnable {
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
 			//Check if a new target has been reached
-			if (currentPos / 5000 > oldPos / 5000) {
-				int announce = (currentPos / 5000) * 5000;
+			if (currentPos / announceInterval > oldPos / announceInterval) {
+				int announce = (currentPos / announceInterval) * announceInterval;
 				plugin.getLogger().info("|IOBC|Player " + p.getName() + " has passed the " + String.format(Locale.US, "%,d", announce) + " metres mark!");
 			}
 			
