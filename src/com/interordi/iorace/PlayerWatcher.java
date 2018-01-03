@@ -15,6 +15,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 
 public class PlayerWatcher implements Runnable {
@@ -119,6 +123,8 @@ public class PlayerWatcher implements Runnable {
 			//Record the new position
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
+			updateScore(p);
+			
 			//Check if a new target has been reached
 			if (currentPos / announceInterval > oldPos / announceInterval) {
 				int announce = (currentPos / announceInterval) * announceInterval;
@@ -155,6 +161,44 @@ public class PlayerWatcher implements Runnable {
 		//Positions changed, save the file
 		if (updates) {
 			savePositions();
+		}
+	}
+	
+	
+	//Update a player's score on the global display
+	public void updateScore(Player player) {
+		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+		Objective objective = board.getObjective("position");
+		if (objective != null) {
+			Score myScore = objective.getScore(player.getDisplayName());
+			
+			int announce = (posPlayers.get(player.getUniqueId()) / announceInterval) * announceInterval;
+			myScore.setScore(announce);
+		}
+	}
+	
+	
+	//Refresh the scores based on the current players
+	public void refreshScores() {
+		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+		Objective objective = board.getObjective("position");
+		if (objective != null) {
+			//Remove a player then rebuild the scoreboard from the known data
+			objective.unregister();
+			objective = null;
+			
+			objective = board.registerNewObjective("position", "dummy");
+			board.clearSlot(DisplaySlot.SIDEBAR);
+			objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+			objective.setDisplayName("Players");
+			
+			for (UUID key : posPlayers.keySet()) {
+				String playerName = Bukkit.getPlayer(key).getDisplayName();
+				Score myScore = objective.getScore(playerName);
+				
+				int announce = (posPlayers.get(key) / announceInterval) * announceInterval;
+				myScore.setScore(announce);
+			}
 		}
 	}
 }

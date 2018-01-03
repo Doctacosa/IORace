@@ -1,14 +1,18 @@
 package com.interordi.iorace;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import com.interordi.iorace.DeathListener;
 import com.interordi.iorace.PlayerWatcher;
 
 
-public class IORace extends JavaPlugin {
+public class IORace extends JavaPlugin implements Runnable {
 
 	DeathListener thisDeathListener;
 	PlayerWatcher thisPlayerWatcher;
@@ -32,6 +36,9 @@ public class IORace extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 10*20L, 10*20L);
 		
 		getLogger().info("IORace enabled");
+		
+		//Run initial required tasks once
+		getServer().getScheduler().scheduleSyncDelayedTask(this, this);
 	}
 	
 	
@@ -47,5 +54,21 @@ public class IORace extends JavaPlugin {
 	
 	public String colorize(String s) {
 		return ChatColor.translateAlternateColorCodes('&', s);
+	}
+	
+	
+	@Override
+	public void run() {
+		//Add the basic scoreboard when the server is loaded
+		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+		Objective objective = board.getObjective("position");
+		
+		if (objective != null)
+			objective.unregister();
+		
+		objective = board.registerNewObjective("position", "dummy");
+		board.clearSlot(DisplaySlot.SIDEBAR);
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		objective.setDisplayName("Players");
 	}
 }
