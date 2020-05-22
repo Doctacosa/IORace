@@ -1,5 +1,0 @@
-name: IORace
-main: com.interordi.iorace.IORace
-version: 0.0.1
-
-commands:
