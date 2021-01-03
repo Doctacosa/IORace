@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -195,11 +196,14 @@ public class PlayerWatcher implements Runnable {
 			objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 			
 			for (UUID key : posPlayers.keySet()) {
-				String playerName = Bukkit.getPlayer(key).getDisplayName();
-				Score myScore = objective.getScore(playerName);
-				
-				int update = (posPlayers.get(key) / updateInterval) * updateInterval;
-				myScore.setScore(update);
+				OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(key);
+				String playerName = offPlayer.getName();
+				if (!playerName.isEmpty()) {
+					Score myScore = objective.getScore(playerName);
+					
+					int update = (posPlayers.get(key) / updateInterval) * updateInterval;
+					myScore.setScore(update);
+				}
 			}
 		}
 	}
