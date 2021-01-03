@@ -188,10 +188,9 @@ public class PlayerWatcher implements Runnable {
 			objective.unregister();
 			objective = null;
 			
-			objective = board.registerNewObjective("position", "dummy");
+			objective = board.registerNewObjective("position", "dummy", "Players");
 			board.clearSlot(DisplaySlot.SIDEBAR);
 			objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-			objective.setDisplayName("Players");
 			
 			for (UUID key : posPlayers.keySet()) {
 				String playerName = Bukkit.getPlayer(key).getDisplayName();

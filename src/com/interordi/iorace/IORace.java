@@ -66,9 +66,8 @@ public class IORace extends JavaPlugin implements Runnable {
 		if (objective != null)
 			objective.unregister();
 		
-		objective = board.registerNewObjective("position", "dummy");
+		objective = board.registerNewObjective("position", "dummy", "Players");
 		board.clearSlot(DisplaySlot.SIDEBAR);
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		objective.setDisplayName("Players");
 	}
 }
