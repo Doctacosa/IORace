@@ -67,6 +67,9 @@ public class PlayerWatcher implements Runnable {
 			String pos = posData.getString(temp);
 			posPlayers.put(uuid, Integer.parseInt(pos));
 		}
+
+		//Show the scoreboard with the loaded data
+		refreshScores();
 	}
 	
 	
@@ -170,8 +173,8 @@ public class PlayerWatcher implements Runnable {
 		if (objective != null) {
 			Score myScore = objective.getScore(player.getDisplayName());
 			
-			int announce = (posPlayers.get(player.getUniqueId()) / updateInterval) * updateInterval;
-			myScore.setScore(announce);
+			int update = (posPlayers.get(player.getUniqueId()) / updateInterval) * updateInterval;
+			myScore.setScore(update);
 		}
 	}
 	
@@ -194,8 +197,8 @@ public class PlayerWatcher implements Runnable {
 				String playerName = Bukkit.getPlayer(key).getDisplayName();
 				Score myScore = objective.getScore(playerName);
 				
-				int announce = (posPlayers.get(key) / updateInterval) * updateInterval;
-				myScore.setScore(announce);
+				int update = (posPlayers.get(key) / updateInterval) * updateInterval;
+				myScore.setScore(update);
 			}
 		}
 	}
