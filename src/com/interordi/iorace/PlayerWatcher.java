@@ -124,7 +124,7 @@ public class PlayerWatcher implements Runnable {
 			//Record the new position
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
-			updateScore(p);
+			updateScore(p, false);
 			
 			//Check if a new target has been reached
 			if (currentPos / announceInterval > oldPos / announceInterval) {
@@ -167,13 +167,15 @@ public class PlayerWatcher implements Runnable {
 	
 	
 	//Update a player's score on the global display
-	public void updateScore(Player player) {
+	public void updateScore(Player player, boolean precise) {
 		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 		Objective objective = board.getObjective("position");
 		if (objective != null) {
 			Score myScore = objective.getScore(player.getDisplayName());
 			
-			int update = (posPlayers.get(player.getUniqueId()) / updateInterval) * updateInterval;
+			int update = posPlayers.get(player.getUniqueId());
+			if (!precise)
+				update = (update / updateInterval) * updateInterval;
 			myScore.setScore(update);
 		}
 	}
