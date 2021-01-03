@@ -27,13 +27,13 @@ public class IORace extends JavaPlugin implements Runnable {
 		
 		//Configuration file use (config.yml): http://wiki.bukkit.org/Configuration_API_Reference
 		boolean announceDeaths = this.getConfig().getBoolean("announce-deaths");
-		int announceInterval = this.getConfig().getInt("announce-interval");
+		int updateInterval = this.getConfig().getInt("update-interval", 500);
+		int announceInterval = this.getConfig().getInt("announce-interval", 5000);
 		thisDeathListener.setAnnounceDeaths(announceDeaths);
-		thisPlayerWatcher.setAnnounceDeaths(announceDeaths);
-		thisPlayerWatcher.setAnnounceInterval(announceInterval);
+		thisPlayerWatcher.setUpdates(updateInterval, announceInterval, announceDeaths);
 		
 		//Check every second for updated positions
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 10*20L, 10*20L);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 5*20L, 5*20L);
 		
 		getLogger().info("IORace enabled");
 		

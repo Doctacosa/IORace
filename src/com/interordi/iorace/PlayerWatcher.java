@@ -27,6 +27,7 @@ public class PlayerWatcher implements Runnable {
 	private String filePath = "plugins/IORace/positions.yml";
 	Map< UUID, Integer > posPlayers;
 	boolean announceDeaths = false;
+	int updateInterval = 500;
 	int announceInterval = 5000;
 	
 	
@@ -99,13 +100,10 @@ public class PlayerWatcher implements Runnable {
 	}
 	
 	
-	public void setAnnounceDeaths(boolean value) {
-		this.announceDeaths = value;
-	}
-	
-	
-	public void setAnnounceInterval(int value) {
-		this.announceInterval = value;
+	public void setUpdates(int updates, int announces, boolean deaths) {
+		this.updateInterval = updates;
+		this.announceInterval = announces;
+		this.announceDeaths = deaths;
 	}
 	
 	
@@ -172,7 +170,7 @@ public class PlayerWatcher implements Runnable {
 		if (objective != null) {
 			Score myScore = objective.getScore(player.getDisplayName());
 			
-			int announce = (posPlayers.get(player.getUniqueId()) / announceInterval) * announceInterval;
+			int announce = (posPlayers.get(player.getUniqueId()) / updateInterval) * updateInterval;
 			myScore.setScore(announce);
 		}
 	}
@@ -196,7 +194,7 @@ public class PlayerWatcher implements Runnable {
 				String playerName = Bukkit.getPlayer(key).getDisplayName();
 				Score myScore = objective.getScore(playerName);
 				
-				int announce = (posPlayers.get(key) / announceInterval) * announceInterval;
+				int announce = (posPlayers.get(key) / updateInterval) * updateInterval;
 				myScore.setScore(announce);
 			}
 		}
