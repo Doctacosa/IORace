@@ -60,22 +60,13 @@ public class PlayerWatcher implements Runnable {
 			return;	//Nothing yet, exit
 		}
 		Set< String > cs = posData.getKeys(false);
-		if (cs == null) {
-			plugin.getLogger().info("ERROR: Couldn't get player keys");
-			return;	//No players found, exit
-		}
-		
-		if (cs.size() == 0) {
-			//Nothing recorded yet, whatev'
-			//plugin.getLogger().info("ERROR: Required YML section not found");
-		}
-		
-		
-		//Loop on each player
-		for (String temp : cs) {
-			UUID uuid = UUID.fromString(temp);
-			String pos = posData.getString(temp);
-			posPlayers.put(uuid, Integer.parseInt(pos));
+		if (cs != null) {
+			//Loop on each player
+			for (String temp : cs) {
+				UUID uuid = UUID.fromString(temp);
+				String pos = posData.getString(temp);
+				posPlayers.put(uuid, Integer.parseInt(pos));
+			}
 		}
 
 		//Show the scoreboard with the loaded data
