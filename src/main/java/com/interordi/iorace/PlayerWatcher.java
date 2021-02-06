@@ -43,6 +43,15 @@ public class PlayerWatcher implements Runnable {
 	public void loadPositions() {
 		
 		File statsFile = new File(this.filePath);
+		try {
+			if (!statsFile.exists())
+				statsFile.createNewFile();
+		} catch (IOException e) {
+			System.err.println("Failed to create the positions file");
+			e.printStackTrace();
+			return;
+		}
+
 		FileConfiguration statsAccess = YamlConfiguration.loadConfiguration(statsFile);
 		
 		ConfigurationSection posData = statsAccess.getConfigurationSection("positions");
