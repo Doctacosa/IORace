@@ -41,7 +41,7 @@ public class PlayerWatcher implements Runnable {
 	
 	//Get the current list of positions as stored in the file
 	public void loadPositions() {
-		
+
 		File statsFile = new File(this.filePath);
 		try {
 			if (!statsFile.exists())
@@ -178,6 +178,8 @@ public class PlayerWatcher implements Runnable {
 			if (!precise)
 				update = (update / updateInterval) * updateInterval;
 			myScore.setScore(update);
+		} else {
+			System.err.println("NO OBJECTIVE FOUND!!");
 		}
 	}
 	
@@ -186,24 +188,26 @@ public class PlayerWatcher implements Runnable {
 	public void refreshScores() {
 		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 		Objective objective = board.getObjective("position");
+
+		//If the objective doesn't exist yet, define it
 		if (objective != null) {
-			//Remove a player then rebuild the scoreboard from the known data
 			objective.unregister();
 			objective = null;
-			
-			objective = board.registerNewObjective("position", "dummy", "Players");
-			board.clearSlot(DisplaySlot.SIDEBAR);
-			objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-			
-			for (UUID key : posPlayers.keySet()) {
-				OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(key);
-				String playerName = offPlayer.getName();
-				if (!playerName.isEmpty()) {
-					Score myScore = objective.getScore(playerName);
-					
-					int update = (posPlayers.get(key) / updateInterval) * updateInterval;
-					myScore.setScore(update);
-				}
+		}
+
+		//Rebuild the scoreboard from the known data
+		objective = board.registerNewObjective("position", "dummy", "Players");
+		board.clearSlot(DisplaySlot.SIDEBAR);
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
+		for (UUID key : posPlayers.keySet()) {
+			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(key);
+			String playerName = offPlayer.getName();
+			if (!playerName.isEmpty()) {
+				Score myScore = objective.getScore(playerName);
+				
+				int update = (posPlayers.get(key) / updateInterval) * updateInterval;
+				myScore.setScore(update);
 			}
 		}
 	}
