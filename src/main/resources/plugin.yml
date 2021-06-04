@@ -1,5 +1,6 @@
 name: IORace
 main: com.interordi.iorace.IORace
 version: 0.0.1
+api-version: 1.13
 
 commands:
