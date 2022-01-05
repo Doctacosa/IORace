@@ -35,7 +35,7 @@ public class DeathListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			Player p = (Player)event.getEntity();
 			
-			if (p.getGameMode() == GameMode.SURVIVAL) {
+			if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
 				Location lastLocation = p.getLocation();
 				int lastX = lastLocation.getBlockX();
 				

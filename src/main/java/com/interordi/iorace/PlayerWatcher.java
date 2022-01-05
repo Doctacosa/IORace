@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -113,6 +114,9 @@ public class PlayerWatcher implements Runnable {
 	
 	//Check and update position if needed
 	public boolean checkStatus(Player p) {
+		if (p.getGameMode() != GameMode.SURVIVAL && p.getGameMode() != GameMode.ADVENTURE)
+			return false;
+
 		Location newLocation = p.getLocation();
 		int currentPos = newLocation.getBlockX();
 		
