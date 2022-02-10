@@ -48,7 +48,7 @@ public class PlayerWatcher implements Runnable {
 			if (!statsFile.exists())
 				statsFile.createNewFile();
 		} catch (IOException e) {
-			System.err.println("Failed to create the positions file");
+			Bukkit.getLogger().severe("Failed to create the positions file");
 			e.printStackTrace();
 			return;
 		}
@@ -92,7 +92,7 @@ public class PlayerWatcher implements Runnable {
 		try {
 			statsAccess.save(statsFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Bukkit.getLogger().severe("Failed to save the player positions.");
 			e.printStackTrace();
 		}
 	}
@@ -183,7 +183,7 @@ public class PlayerWatcher implements Runnable {
 				update = (update / updateInterval) * updateInterval;
 			myScore.setScore(update);
 		} else {
-			System.err.println("NO OBJECTIVE FOUND!!");
+			Bukkit.getLogger().severe("No objective found!!");
 		}
 	}
 	
