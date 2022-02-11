@@ -7,8 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class IORace extends JavaPlugin {
 
-	DeathListener thisDeathListener;
-	PlayerWatcher thisPlayerWatcher;
+	public DeathListener thisDeathListener;
+	public PlayerWatcher thisPlayerWatcher;
 	
 	
 	public void onEnable() {

@@ -25,12 +25,12 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class PlayerWatcher implements Runnable {
 
-	IORace plugin;
+	private IORace plugin;
 	private String filePath = "plugins/IORace/positions.yml";
-	Map< UUID, Integer > posPlayers;
-	boolean announceDeaths = false;
-	int updateInterval = 500;
-	int announceInterval = 5000;
+	private Map< UUID, Integer > posPlayers;
+	private boolean announceDeaths = false;
+	private int updateInterval = 500;
+	private int announceInterval = 5000;
 	private boolean useIOChatBridge = false;
 	
 	

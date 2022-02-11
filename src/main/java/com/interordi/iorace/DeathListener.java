@@ -17,9 +17,9 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class DeathListener implements Listener {
 	
-	IORace plugin;
-	boolean announceDeaths = false;
-	boolean useIOChatBridge = false;
+	private IORace plugin;
+	private boolean announceDeaths = false;
+	private boolean useIOChatBridge = false;
 	
 	
 	public DeathListener(IORace plugin) {
