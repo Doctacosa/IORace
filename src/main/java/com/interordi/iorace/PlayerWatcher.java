@@ -28,6 +28,7 @@ public class PlayerWatcher implements Runnable {
 	private IORace plugin;
 	private String filePath = "plugins/IORace/positions.yml";
 	private Map< UUID, Integer > posPlayers;
+	private Map< UUID, Integer > posDeaths;
 	private boolean announceDeaths = false;
 	private int updateInterval = 500;
 	private int announceInterval = 5000;
@@ -36,6 +37,7 @@ public class PlayerWatcher implements Runnable {
 	
 	public PlayerWatcher(IORace plugin) {
 		this.posPlayers = new HashMap< UUID, Integer >();
+		this.posDeaths = new HashMap< UUID, Integer >();
 		this.plugin = plugin;
 		loadPositions();
 	}
@@ -57,22 +59,33 @@ public class PlayerWatcher implements Runnable {
 		FileConfiguration statsAccess = YamlConfiguration.loadConfiguration(statsFile);
 		
 		ConfigurationSection posData = statsAccess.getConfigurationSection("positions");
-		if (posData == null) {
-			plugin.getLogger().info("ERROR: Positions YML section not found");
-			return;	//Nothing yet, exit
+		if (posData != null) {
+			Set< String > cs = posData.getKeys(false);
+			if (cs != null) {
+				//Loop on each player
+				for (String temp : cs) {
+					UUID uuid = UUID.fromString(temp);
+					String pos = posData.getString(temp);
+					posPlayers.put(uuid, Integer.parseInt(pos));
+				}
+			}
 		}
-		Set< String > cs = posData.getKeys(false);
-		if (cs != null) {
-			//Loop on each player
-			for (String temp : cs) {
-				UUID uuid = UUID.fromString(temp);
-				String pos = posData.getString(temp);
-				posPlayers.put(uuid, Integer.parseInt(pos));
+
+		posData = statsAccess.getConfigurationSection("deaths");
+		if (posData != null) {
+			Set< String > cs = posData.getKeys(false);
+			if (cs != null) {
+				//Loop on each player
+				for (String temp : cs) {
+					UUID uuid = UUID.fromString(temp);
+					String pos = posData.getString(temp);
+					posDeaths.put(uuid, Integer.parseInt(pos));
+				}
 			}
 		}
 
 		//Show the scoreboard with the loaded data
-		refreshScores();
+		loadScores();
 	}
 	
 	
@@ -90,6 +103,15 @@ public class PlayerWatcher implements Runnable {
 			statsAccess.set("positions." + uuid, position);
 		}
 		
+		statsAccess.set("deaths", "");
+		
+		for (Map.Entry< UUID , Integer > entry : this.posDeaths.entrySet()) {
+			UUID uuid = entry.getKey();
+			int position = entry.getValue();
+			
+			statsAccess.set("deaths." + uuid, position);
+		}
+		
 		try {
 			statsAccess.save(statsFile);
 		} catch (IOException e) {
@@ -103,6 +125,13 @@ public class PlayerWatcher implements Runnable {
 	public void setPosPlayer(Player p, int x) {
 		this.posPlayers.put(p.getUniqueId(), x);
 		this.savePositions();
+	}
+	public void recordDeath(Player p, int x) {
+		if (!this.posDeaths.containsKey(p.getUniqueId()) || x > this.posDeaths.get(p.getUniqueId())) {
+			this.posDeaths.put(p.getUniqueId(), x);
+			this.checkStatus(p);
+			this.savePositions();
+		}
 	}
 	
 	
@@ -178,14 +207,14 @@ public class PlayerWatcher implements Runnable {
 	
 	
 	//Update a player's score on the global display
-	public void updateScore(Player player, boolean precise) {
+	public void updateScore(Player player, boolean death) {
 		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 		Objective objective = board.getObjective("position");
 		if (objective != null) {
 			Score myScore = objective.getScore(player.getDisplayName());
 			
 			int update = posPlayers.get(player.getUniqueId());
-			if (!precise)
+			if (!death)
 				update = (update / updateInterval) * updateInterval;
 			myScore.setScore(update);
 		} else {
@@ -194,8 +223,8 @@ public class PlayerWatcher implements Runnable {
 	}
 	
 	
-	//Refresh the scores based on the current players
-	public void refreshScores() {
+	//Load the initial display of the scoreboard
+	public void loadScores() {
 		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 		Objective objective = board.getObjective("position");
 
@@ -216,8 +245,15 @@ public class PlayerWatcher implements Runnable {
 			if (!playerName.isEmpty()) {
 				Score myScore = objective.getScore(playerName);
 				
-				int update = (posPlayers.get(key) / updateInterval) * updateInterval;
-				myScore.setScore(update);
+				//If the player's top score is his death, display it as-is
+				//Else, display the rounded best score
+				int display = 0;
+				if (posDeaths.containsKey(key) && posDeaths.get(key) >= posPlayers.get(key))
+					display = posDeaths.get(key);
+				else
+					display = (posPlayers.get(key) / updateInterval) * updateInterval;
+
+				myScore.setScore(display);
 			}
 		}
 	}

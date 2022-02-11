@@ -40,6 +40,7 @@ public class DeathListener implements Listener {
 				Location lastLocation = p.getLocation();
 				int lastX = lastLocation.getBlockX();
 				
+				plugin.thisPlayerWatcher.recordDeath(p, lastX);
 				plugin.thisPlayerWatcher.updateScore(p, true);
 
 				//If we want to announce deaths, broadcast it
