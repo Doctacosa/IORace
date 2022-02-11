@@ -31,6 +31,7 @@ public class PlayerWatcher implements Runnable {
 	boolean announceDeaths = false;
 	int updateInterval = 500;
 	int announceInterval = 5000;
+	private boolean useIOChatBridge = false;
 	
 	
 	public PlayerWatcher(IORace plugin) {
@@ -105,10 +106,11 @@ public class PlayerWatcher implements Runnable {
 	}
 	
 	
-	public void setUpdates(int updates, int announces, boolean deaths) {
+	public void setUpdates(int updates, int announces, boolean deaths, boolean useIOChatBridge) {
 		this.updateInterval = updates;
 		this.announceInterval = announces;
 		this.announceDeaths = deaths;
+		this.useIOChatBridge = useIOChatBridge;
 	}
 	
 	
@@ -134,7 +136,11 @@ public class PlayerWatcher implements Runnable {
 			//Check if a new target has been reached
 			if (currentPos / announceInterval > oldPos / announceInterval) {
 				int announce = (currentPos / announceInterval) * announceInterval;
-				plugin.getLogger().info("|IOBC|Player " + p.getName() + " has passed the " + String.format(Locale.US, "%,d", announce) + " metres mark!");
+				String message = "Player " + p.getName() + " has passed the " + String.format(Locale.US, "%,d", announce) + " metres mark!";
+				if (useIOChatBridge)
+					plugin.getLogger().info("|IOBC|" + message);
+				else
+					Bukkit.getServer().broadcastMessage(message);
 			}
 			
 			return true;

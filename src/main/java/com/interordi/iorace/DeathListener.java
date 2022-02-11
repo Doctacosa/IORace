@@ -19,6 +19,7 @@ public class DeathListener implements Listener {
 	
 	IORace plugin;
 	boolean announceDeaths = false;
+	boolean useIOChatBridge = false;
 	
 	
 	public DeathListener(IORace plugin) {
@@ -42,8 +43,13 @@ public class DeathListener implements Listener {
 				plugin.thisPlayerWatcher.updateScore(p, true);
 
 				//If we want to announce deaths, broadcast it
-				if (this.announceDeaths)
-					plugin.getLogger().info("|IOBC|Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastX) + " metres!");
+				if (this.announceDeaths) {
+					String message = "Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastX) + " metres!";
+					if (useIOChatBridge)
+						plugin.getLogger().info("|IOBC|" + message);
+					else
+						Bukkit.getServer().broadcastMessage(message);
+				}
 			}
 			
 			@SuppressWarnings("unused")
@@ -70,8 +76,9 @@ public class DeathListener implements Listener {
 	}
 
 
-	public void setAnnounceDeaths(boolean value) {
+	public void setAnnounceDeaths(boolean value, boolean useIOChatBridge) {
 		this.announceDeaths = value;
+		this.useIOChatBridge = useIOChatBridge;
 	}
 	
 }

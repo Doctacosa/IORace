@@ -1,3 +1,4 @@
 announce-deaths: true
 announce-interval: 5000
 update-interval: 500
+use-iochatbridge: false

@@ -22,8 +22,9 @@ public class IORace extends JavaPlugin {
 		boolean announceDeaths = this.getConfig().getBoolean("announce-deaths");
 		int updateInterval = this.getConfig().getInt("update-interval", 500);
 		int announceInterval = this.getConfig().getInt("announce-interval", 5000);
-		thisDeathListener.setAnnounceDeaths(announceDeaths);
-		thisPlayerWatcher.setUpdates(updateInterval, announceInterval, announceDeaths);
+		boolean useIOChatBridge = this.getConfig().getBoolean("use-iochatbridge", false);
+		thisDeathListener.setAnnounceDeaths(announceDeaths, useIOChatBridge);
+		thisPlayerWatcher.setUpdates(updateInterval, announceInterval, announceDeaths, useIOChatBridge);
 		
 		//Check every second for updated positions
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 5*20L, 5*20L);
