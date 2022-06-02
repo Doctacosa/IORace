@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 
@@ -29,38 +30,31 @@ public class DeathListener implements Listener {
 
 	
 	@EventHandler
-	public void onEntityDeath(EntityDeathEvent event) {
-		@SuppressWarnings("unused")
-		EntityType entity = event.getEntityType();
-		
-		if (event.getEntity() instanceof Player) {
-			Player p = (Player)event.getEntity();
-			
-			if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
-				Location lastLocation = p.getLocation();
-				int lastX = lastLocation.getBlockX();
-				
-				plugin.thisPlayerWatcher.recordDeath(p, lastX);
-				plugin.thisPlayerWatcher.updateScore(p, true);
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		Player p = (Player)event.getEntity();
 
-				//If we want to announce deaths, broadcast it
-				if (this.announceDeaths) {
-					String message = "Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastX) + " metres!";
-					if (useIOChatBridge)
-						plugin.getLogger().info("|IOBC|" + message);
-					else
-						Bukkit.getServer().broadcastMessage(message);
-				}
+		if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
+			Location lastLocation = p.getLocation();
+			int lastX = lastLocation.getBlockX();
+			
+			plugin.thisPlayerWatcher.recordDeath(p, lastX);
+			plugin.thisPlayerWatcher.updateScore(p, true);
+
+			//If we want to announce deaths, broadcast it
+			if (this.announceDeaths) {
+				String message = "Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastX) + " metres!";
+				if (useIOChatBridge)
+					plugin.getLogger().info("|IOBC|" + message);
+				else
+					Bukkit.getServer().broadcastMessage(message);
 			}
-			
-			@SuppressWarnings("unused")
-			EntityDamageEvent entityDamageCause = p.getLastDamageCause();
-		} else {
-			
 		}
+		
+		@SuppressWarnings("unused")
+		EntityDamageEvent entityDamageCause = p.getLastDamageCause();
 	}
-	
-	
+
+
 	//Respawn to spawn
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
