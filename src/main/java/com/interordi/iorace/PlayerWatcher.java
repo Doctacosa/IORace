@@ -12,15 +12,10 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 
 public class PlayerWatcher implements Runnable {
@@ -29,6 +24,7 @@ public class PlayerWatcher implements Runnable {
 	private String filePath = "plugins/IORace/positions.yml";
 	private Map< UUID, Integer > posPlayers;
 	private Map< UUID, Integer > posDeaths;
+	@SuppressWarnings("unused")
 	private boolean announceDeaths = false;
 	private int updateInterval = 500;
 	private int announceInterval = 5000;
@@ -208,53 +204,26 @@ public class PlayerWatcher implements Runnable {
 	
 	//Update a player's score on the global display
 	public void updateScore(Player player, boolean death) {
-		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-		Objective objective = board.getObjective("position");
-		if (objective != null) {
-			Score myScore = objective.getScore(player.getDisplayName());
-			
-			int update = posPlayers.get(player.getUniqueId());
-			if (!death)
-				update = (update / updateInterval) * updateInterval;
-			myScore.setScore(update);
-		} else {
-			Bukkit.getLogger().severe("No objective found!!");
-		}
+		int score = posPlayers.get(player.getUniqueId());
+		if (!death)
+			score = (score / updateInterval) * updateInterval;
+		plugin.getScores().updateScore(player, score);
 	}
 	
 	
 	//Load the initial display of the scoreboard
+	//These are the values we want to display, not actual top position
 	public void loadScores() {
-		Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-		Objective objective = board.getObjective("position");
-
-		//If the objective doesn't exist yet, define it
-		if (objective != null) {
-			objective.unregister();
-			objective = null;
-		}
-
-		//Rebuild the scoreboard from the known data
-		objective = board.registerNewObjective("position", "dummy", "Players");
-		board.clearSlot(DisplaySlot.SIDEBAR);
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		
+		Map< UUID, Integer > scores = new HashMap< UUID, Integer >();
 		for (UUID key : posPlayers.keySet()) {
-			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(key);
-			String playerName = offPlayer.getName();
-			if (!playerName.isEmpty()) {
-				Score myScore = objective.getScore(playerName);
-				
-				//If the player's top score is his death, display it as-is
-				//Else, display the rounded best score
-				int display = 0;
-				if (posDeaths.containsKey(key) && posDeaths.get(key) >= posPlayers.get(key))
-					display = posDeaths.get(key);
-				else
-					display = (posPlayers.get(key) / updateInterval) * updateInterval;
+			int display = 0;
+			if (posDeaths.containsKey(key) && posDeaths.get(key) >= posPlayers.get(key))
+				display = posDeaths.get(key);
+			else
+				display = (posPlayers.get(key) / updateInterval) * updateInterval;
 
-				myScore.setScore(display);
-			}
+			scores.put(key, display);
 		}
+		plugin.getScores().loadScores(scores);
 	}
 }

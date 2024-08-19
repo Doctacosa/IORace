@@ -9,9 +9,12 @@ public class IORace extends JavaPlugin {
 
 	public DeathListener thisDeathListener;
 	public PlayerWatcher thisPlayerWatcher;
+	Scores thisScores;
 	
 	
 	public void onEnable() {
+		thisScores = new Scores("Position");
+
 		thisDeathListener = new DeathListener(this);
 		thisPlayerWatcher = new PlayerWatcher(this);
 		
@@ -43,6 +46,11 @@ public class IORace extends JavaPlugin {
 	}
 	
 	
+	public Scores getScores() {
+		return thisScores;
+	}
+
+
 	public String colorize(String s) {
 		return ChatColor.translateAlternateColorCodes('&', s);
 	}
