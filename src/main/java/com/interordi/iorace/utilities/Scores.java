@@ -1,4 +1,4 @@
-package com.interordi.iorace;
+package com.interordi.iorace.utilities;
 
 import java.util.Comparator;
 import java.util.HashMap;
