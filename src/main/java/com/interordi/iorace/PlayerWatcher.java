@@ -156,7 +156,9 @@ public class PlayerWatcher implements Runnable {
 			//Record the new position
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
-			updateScore(p, false);
+			Integer deathPos = posDeaths.get(p.getUniqueId());
+			if (deathPos == null || deathPos < currentPos)
+				updateScore(p, false);
 			
 			//Check if a new target has been reached
 			if (currentPos / announceInterval > oldPos / announceInterval) {
