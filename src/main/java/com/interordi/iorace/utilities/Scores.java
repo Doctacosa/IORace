@@ -87,6 +87,8 @@ public class Scores {
 			Bukkit.getLogger().severe("No objective found!!");
 		}
 
+		scoresPlayers.put(player.getUniqueId(), score);
+
 		refreshDisplay();
 	}
 	
