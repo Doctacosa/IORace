@@ -108,6 +108,8 @@ public class Scores {
 
 		//Prepare the scoreboard for later updates
 		objective = board.registerNewObjective("score", "dummy", header);
+
+		refreshDisplay();
 	}
 
 }
