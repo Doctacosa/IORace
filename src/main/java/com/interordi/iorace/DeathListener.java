@@ -17,12 +17,18 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 public class DeathListener implements Listener {
 	
 	private IORace plugin;
+	private char targetAxis;
+	@SuppressWarnings("unused")
+	private char targetDirection;
+
 	private boolean announceDeaths = false;
 	private boolean useIOChatBridge = false;
 	
 	
-	public DeathListener(IORace plugin) {
+	public DeathListener(IORace plugin, char targetAxis, char targetDirection) {
 		this.plugin = plugin;
+		this.targetAxis = targetAxis;
+		this.targetDirection = targetDirection;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -33,14 +39,20 @@ public class DeathListener implements Listener {
 
 		if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
 			Location lastLocation = p.getLocation();
-			int lastX = lastLocation.getBlockX();
+			int lastCoord = 0;
+			if (targetAxis == 'x')
+				lastCoord = lastLocation.getBlockX();
+			else if (targetAxis == 'y')
+				lastCoord = lastLocation.getBlockY();
+			else
+				lastCoord = lastLocation.getBlockZ();
 			
-			plugin.thisPlayerWatcher.recordDeath(p, lastX);
+			plugin.thisPlayerWatcher.recordDeath(p, lastCoord);
 			plugin.thisPlayerWatcher.updateScore(p, true);
 
 			//If we want to announce deaths, broadcast it
 			if (this.announceDeaths) {
-				String message = "Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastX) + " metres!";
+				String message = "Player " + p.getName() + " has fallen after " + String.format(Locale.US, "%,d", lastCoord) + " metres!";
 				if (useIOChatBridge)
 					plugin.getLogger().info("|IOBC|" + message);
 				else

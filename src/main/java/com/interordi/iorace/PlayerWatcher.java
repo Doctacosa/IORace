@@ -21,6 +21,9 @@ import org.bukkit.entity.Player;
 public class PlayerWatcher implements Runnable {
 
 	private IORace plugin;
+	private char targetAxis;
+	private char targetDirection;
+
 	private String filePath = "plugins/IORace/positions.yml";
 	private Map< UUID, Integer > posPlayers;
 	private Map< UUID, Integer > posDeaths;
@@ -31,10 +34,13 @@ public class PlayerWatcher implements Runnable {
 	private boolean useIOChatBridge = false;
 	
 	
-	public PlayerWatcher(IORace plugin) {
+	public PlayerWatcher(IORace plugin, char targetAxis, char targetDirection) {
 		this.posPlayers = new HashMap< UUID, Integer >();
 		this.posDeaths = new HashMap< UUID, Integer >();
 		this.plugin = plugin;
+		this.targetAxis = targetAxis;
+		this.targetDirection = targetDirection;
+
 		loadPositions();
 	}
 	
@@ -118,13 +124,16 @@ public class PlayerWatcher implements Runnable {
 
 
 	//Register the position of a player
-	public void setPosPlayer(Player p, int x) {
-		this.posPlayers.put(p.getUniqueId(), x);
+	public void setPosPlayer(Player p, int coord) {
+		this.posPlayers.put(p.getUniqueId(), coord);
 		this.savePositions();
 	}
-	public void recordDeath(Player p, int x) {
-		if (!this.posDeaths.containsKey(p.getUniqueId()) || x > this.posDeaths.get(p.getUniqueId())) {
-			this.posDeaths.put(p.getUniqueId(), x);
+	public void recordDeath(Player p, int coord) {
+		if (!this.posDeaths.containsKey(p.getUniqueId()) || (
+			(targetDirection == '+' && coord > this.posDeaths.get(p.getUniqueId())) ||
+			(targetDirection == '-' && coord < this.posDeaths.get(p.getUniqueId()))
+		)) {
+			this.posDeaths.put(p.getUniqueId(), coord);
 			this.checkStatus(p);
 			this.savePositions();
 		}
@@ -145,11 +154,20 @@ public class PlayerWatcher implements Runnable {
 			return false;
 
 		Location newLocation = p.getLocation();
-		int currentPos = newLocation.getBlockX();
+		int currentPos = 0;
+		if (targetAxis == 'x')
+			currentPos = newLocation.getBlockX();
+		else if (targetAxis == 'y')
+			currentPos = newLocation.getBlockY();
+		else
+			currentPos = newLocation.getBlockZ();
 		
 		Integer oldPos = posPlayers.get(p.getUniqueId());
 		
-		if (oldPos == null || currentPos > oldPos) {
+		if (oldPos == null || (
+			(targetDirection == '+' && currentPos > oldPos) ||
+			(targetDirection == '-' && currentPos < oldPos)
+		)) {
 			//Null bad. Numbers good!
 			if (oldPos == null)	oldPos = 0;
 			
@@ -157,11 +175,16 @@ public class PlayerWatcher implements Runnable {
 			posPlayers.put(p.getUniqueId(), currentPos);
 			
 			Integer deathPos = posDeaths.get(p.getUniqueId());
-			if (deathPos == null || deathPos < currentPos)
+			if (deathPos == null || (
+				(targetDirection == '+' && deathPos < currentPos) ||
+				(targetDirection == '-' && deathPos > currentPos)
+			))
 				updateScore(p, false);
 			
 			//Check if a new target has been reached
-			if (currentPos / announceInterval > oldPos / announceInterval) {
+			if ((targetDirection == '+' && currentPos / announceInterval > oldPos / announceInterval) ||
+				(targetDirection == '-' && currentPos / announceInterval < oldPos / announceInterval)
+			) {
 				int announce = (currentPos / announceInterval) * announceInterval;
 				String message = "Player " + p.getName() + " has passed the " + String.format(Locale.US, "%,d", announce) + " metres mark!";
 				if (useIOChatBridge)
@@ -219,7 +242,10 @@ public class PlayerWatcher implements Runnable {
 		Map< UUID, Integer > scores = new HashMap< UUID, Integer >();
 		for (UUID key : posPlayers.keySet()) {
 			int display = 0;
-			if (posDeaths.containsKey(key) && posDeaths.get(key) >= posPlayers.get(key))
+			if (posDeaths.containsKey(key) && (
+				(targetDirection == '+' && posDeaths.get(key) >= posPlayers.get(key)) ||
+				(targetDirection == '-' && posDeaths.get(key) < posPlayers.get(key))
+			))
 				display = posDeaths.get(key);
 			else
 				display = (posPlayers.get(key) / updateInterval) * updateInterval;

@@ -20,13 +20,19 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class Scores {
 
-	private Map< UUID, Integer > scoresPlayers;
 	private String header;
+	@SuppressWarnings("unused")
+	private char targetAxis;
+	private char targetDirection;
+
+	private Map< UUID, Integer > scoresPlayers;
 
 
-	public Scores(String header) {
+	public Scores(String header, char targetAxis, char targetDirection) {
 		this.scoresPlayers = new HashMap< UUID, Integer >();
 		this.header = header;
+		this.targetAxis = targetAxis;
+		this.targetDirection = targetDirection;
 	}
 
 
@@ -39,13 +45,23 @@ public class Scores {
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
 		//Get the top three players
-		Map< UUID, Integer > topThree =
-			scoresPlayers.entrySet().stream()
+		Map< UUID, Integer > topThree = null;
+
+		if (targetDirection == '+') {
+			topThree = scoresPlayers.entrySet().stream()
 				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 				.limit(3)
 				.collect(Collectors.toMap(
 					Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)
 			);
+		} else {
+			topThree = scoresPlayers.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+				.limit(3)
+				.collect(Collectors.toMap(
+					Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)
+			);
+		}
 
 		//Include the top players
 		Set< UUID > toDisplay = new HashSet< UUID >();
@@ -69,7 +85,8 @@ public class Scores {
 					continue;
 
 				int display = scoresPlayers.get(uuid);
-				if (display > 0)
+				if ((targetDirection == '+' && display > 0) ||
+					(targetDirection == '-' && display < 0))
 					myScore.setScore(display);
 			}
 		}
