@@ -2,7 +2,7 @@
 
 ![Logo](https://www.interordi.com/images/plugins/iorace-96.png)
 
-Racing minigame for a Minecraft server, on foot! The players start from 0, 0 and need to get as far as they can heading East, trying to reach the highest X coordinate possible. Upon dying, a players is sent all the way back at the start to try again. The highest position reached by each player is logged, allowing you to give out prizes at the end of the event.
+Racing minigame for a Minecraft server, on foot! The players start from 0, 0 and need to get as far as they can in the given direction (East by default, for the highest X coordinate). Upon dying, a players is sent all the way back to the start to try again. The highest position reached by each player is logged, allowing you to give out prizes at the end of the event.
 
 This event is designed to run for multiples days, the players progressing at their own pace. For example, it could last a week or a month without a reset.
 
@@ -28,6 +28,8 @@ To understand how this is played from a player's perspective, [see this guide on
 `announce-deaths`: If deaths should be announced in the chat  
 `announce-interval`: How often progress updates should be broadcast in chat. Decrease the number on difficult maps  
 `update-interval`: How often progress updates should happen in the scoreboard This is kept vague so that others can't know exactly where someone else and sabotage their run  
+`target-axis`: Indicate on which axis players should move (x, y or z; x is default)  
+`target-direction`: Indicate if players should go in the positive (p; default) or negative (m) values  
 `use-iochatbridge`: If the [Interordi Chat Bridge](https://github.com/Doctacosa/IOChatServer) should be used to relay notification; false for standard in-game  
 
 ## Commands, permissions
