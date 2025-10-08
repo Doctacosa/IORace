@@ -1,5 +1,6 @@
 package com.interordi.iorace;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,6 +46,10 @@ public class IORace extends JavaPlugin {
 		//Check every second for updated positions
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, thisPlayerWatcher, 5*20L, 5*20L);
 		
+		//Enable metrics
+		@SuppressWarnings("unused")
+		Metrics metrics = new Metrics(this, 27499);
+
 		getLogger().info("IORace enabled");
 	}
 	
