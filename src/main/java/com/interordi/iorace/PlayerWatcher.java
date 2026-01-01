@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,14 +33,19 @@ public class PlayerWatcher implements Runnable {
 	private int updateInterval = 500;
 	private int announceInterval = 5000;
 	private boolean useIOChatBridge = false;
+	private World targetWorld = null;
 	
 	
-	public PlayerWatcher(IORace plugin, char targetAxis, char targetDirection) {
+	public PlayerWatcher(IORace plugin, char targetAxis, char targetDirection, String targetWorldName) {
 		this.posPlayers = new HashMap< UUID, Integer >();
 		this.posDeaths = new HashMap< UUID, Integer >();
 		this.plugin = plugin;
 		this.targetAxis = targetAxis;
 		this.targetDirection = targetDirection;
+		if (targetWorldName != null && !targetWorldName.isEmpty())
+			this.targetWorld = Bukkit.getWorld(targetWorldName);
+		else
+			this.targetWorld = Bukkit.getWorlds().get(0);
 
 		loadPositions();
 	}
@@ -163,6 +169,10 @@ public class PlayerWatcher implements Runnable {
 			currentPos = newLocation.getBlockZ();
 		
 		Integer oldPos = posPlayers.get(p.getUniqueId());
+
+		//Only count for the target world
+		if (p.getWorld() != this.targetWorld)
+			return false;
 		
 		if (oldPos == null || (
 			(targetDirection == '+' && currentPos > oldPos) ||

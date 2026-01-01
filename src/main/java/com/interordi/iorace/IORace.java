@@ -27,6 +27,7 @@ public class IORace extends JavaPlugin {
 		boolean useIOChatBridge = this.getConfig().getBoolean("use-iochatbridge", false);
 		char targetAxis = this.getConfig().getString("target-axis", "x").toLowerCase().charAt(0);
 		char targetDirection = this.getConfig().getString("target-direction", "+").toLowerCase().charAt(0);
+		String targetWorld = this.getConfig().getString("target-world");
 
 		if (targetDirection == 'p')
 			targetDirection = '+';
@@ -40,7 +41,7 @@ public class IORace extends JavaPlugin {
 		thisDeathListener = new DeathListener(this, targetAxis, targetDirection);
 		thisDeathListener.setAnnounceDeaths(announceDeaths, useIOChatBridge);
 
-		thisPlayerWatcher = new PlayerWatcher(this, targetAxis, targetDirection);
+		thisPlayerWatcher = new PlayerWatcher(this, targetAxis, targetDirection, targetWorld);
 		thisPlayerWatcher.setUpdates(updateInterval, announceInterval, announceDeaths, useIOChatBridge);
 		
 		//Check every second for updated positions
