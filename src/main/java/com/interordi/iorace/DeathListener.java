@@ -23,12 +23,18 @@ public class DeathListener implements Listener {
 
 	private boolean announceDeaths = false;
 	private boolean useIOChatBridge = false;
+	private World targetWorld = null;
 	
 	
-	public DeathListener(IORace plugin, char targetAxis, char targetDirection) {
+	public DeathListener(IORace plugin, char targetAxis, char targetDirection, String targetWorldName) {
 		this.plugin = plugin;
 		this.targetAxis = targetAxis;
 		this.targetDirection = targetDirection;
+		if (targetWorldName != null && !targetWorldName.isEmpty())
+			this.targetWorld = Bukkit.getWorld(targetWorldName);
+		else
+			this.targetWorld = Bukkit.getWorlds().get(0);
+
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -36,6 +42,10 @@ public class DeathListener implements Listener {
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player p = (Player)event.getEntity();
+
+		//Only count for the target world
+		if (p.getWorld() != this.targetWorld)
+			return;
 
 		if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
 			Location lastLocation = p.getLocation();
