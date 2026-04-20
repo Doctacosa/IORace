@@ -38,7 +38,7 @@ public class IORace extends JavaPlugin {
 
 		thisScores = new Scores("Position", targetAxis, targetDirection);
 
-		thisDeathListener = new DeathListener(this, targetAxis, targetDirection);
+		thisDeathListener = new DeathListener(this, targetAxis, targetDirection, targetWorld);
 		thisDeathListener.setAnnounceDeaths(announceDeaths, useIOChatBridge);
 
 		thisPlayerWatcher = new PlayerWatcher(this, targetAxis, targetDirection, targetWorld);
