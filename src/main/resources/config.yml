@@ -3,4 +3,5 @@ announce-interval: 5000
 update-interval: 500
 target-axis: x
 target-direction: p
+target-world: 
 use-iochatbridge: false

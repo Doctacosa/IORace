@@ -30,6 +30,7 @@ To understand how this is played from a player's perspective, [see this guide on
 `update-interval`: How often progress updates should happen in the scoreboard This is kept vague so that others can't know exactly where someone else and sabotage their run  
 `target-axis`: Indicate on which axis players should move (x, y or z; x is default)  
 `target-direction`: Indicate if players should go in the positive (p; default) or negative (m) values  
+`target-world`: The world to track the race in, if multiple ones are available. Defaults to the first overworld.  
 `use-iochatbridge`: If the [Interordi Chat Bridge](https://github.com/Doctacosa/IOChatServer) should be used to relay notification; false for standard in-game  
 
 ## Commands, permissions
